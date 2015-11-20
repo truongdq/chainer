@@ -1,5 +1,5 @@
 import numpy
-
+import pickle
 from chainer.functions.connection import bilinear
 from chainer import link
 
@@ -79,6 +79,21 @@ class Bilinear(link.Link):
                 self.V2.data[...] = numpy.random.normal(
                     0, numpy.sqrt(1. / right_size), (right_size, out_size))
                 self.b.data.fill(0)
+    def save(self, fname):
+        if self.nobias:
+            pickle.dump([self.W.data, None, None, None], open(fname, 'wb'))
+        else:
+            pickle.dump([self.W.data, self.V1.data, self.V2.data, self.b.data], open(fname, 'wb'))
+    
+    @classmethod
+    def load(cls, fname):
+        init_W, init_V1, init_V2, init_b = pickle.load(open(fname, 'rb'))
+        left_size, right_size, out_size = init_W.shape
+        if init_b is None:
+            return cls(left_size, right_size, out_size, initialW=init_W)
+        else:
+            return cls(left_size, right_size, out_size, initialW=init_W, initial_bias=(init_V1, init_V2, init_b))
+
 
     def __call__(self, e1, e2):
         """Applies the bilinear function to inputs and the internal parameters.

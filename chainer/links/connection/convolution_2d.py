@@ -1,5 +1,5 @@
 import numpy
-
+import pickle
 from chainer.functions.connection import convolution_2d
 from chainer import link
 
@@ -43,6 +43,7 @@ class Convolution2D(link.Link):
                  initialW=None, initial_bias=None):
         kh, kw = _pair(ksize)
         self._conv_arg = (stride, pad, use_cudnn)
+        self.ksize = ksize
 
         W_shape = (out_channels, in_channels, kh, kw)
         super(Convolution2D, self).__init__(W=W_shape)
@@ -60,6 +61,20 @@ class Convolution2D(link.Link):
             if initial_bias is None:
                 initial_bias = bias
             self.b.data[...] = initial_bias
+
+    def save(self, fname):
+        if self.b is None:
+            pickle.dump([self.W.data, self._conv_arg, self.ksize, None], open(fname, 'wb'))
+        else:
+            pickle.dump([self.W.data, self._conv_arg, self.ksize, self.b.data], open(fname, 'wb'))
+    
+    @classmethod
+    def load(cls, fname):
+        init_W, conv_arg, ksize, init_b = pickle.load(open(fname, 'rb'))
+        (out_channels, in_channels, kh, kw) = init_W.shape
+        return cls(in_channels, out_channels, ksize, conv_arg[0], pad=conv_arg[1],
+            use_cudnn=conv_arg[2], initialW=init_W, initial_bias=init_b)
+
 
     def __call__(self, x):
         """Applies the convolution layer.

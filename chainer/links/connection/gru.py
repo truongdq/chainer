@@ -40,15 +40,45 @@ class GRU(link.Chain):
 
     """
 
-    def __init__(self, n_units):
-        super(GRU, self).__init__(
-            W_r=linear.Linear(n_units, n_units),
-            U_r=linear.Linear(n_units, n_units),
-            W_z=linear.Linear(n_units, n_units),
-            U_z=linear.Linear(n_units, n_units),
-            W=linear.Linear(n_units, n_units),
-            U=linear.Linear(n_units, n_units),
-        )
+    def __init__(self, n_units, init_param=None):
+        if init_param is None:
+            super(GRU, self).__init__(
+                W_r=linear.Linear(n_units, n_units),
+                U_r=linear.Linear(n_units, n_units),
+                W_z=linear.Linear(n_units, n_units),
+                U_z=linear.Linear(n_units, n_units),
+                W=linear.Linear(n_units, n_units),
+                U=linear.Linear(n_units, n_units),
+            )
+        else:
+            super(GRU, self).__init__(
+                W_r=init_param[0],
+                U_r=init_param[1],
+                W_z=init_param[2],
+                U_z=init_param[3],
+                W=init_param[4],
+                U=init_param[5],
+            )
+            
+    
+    
+    def save(self, fname):
+        self.W_r.save(fname + '.W_r')
+        self.U_r.save(fname + '.U_r')
+        self.W_z.save(fname + '.W_z')
+        self.U_z.save(fname + '.U_z')
+        self.W.save(fname + '.W')
+        self.U.save(fname + '.U')
+    
+    @classmethod
+    def load(cls, fname):
+        W_r = linear.Linear.load(fname + '.W_r')
+        U_r = linear.Linear.load(fname + '.U_r')
+        W_z = linear.Linear.load(fname + '.W_z')
+        U_z = linear.Linear.load(fname + '.U_z')
+        W = linear.Linear.load(fname + '.W')
+        U = linear.Linear.load(fname + '.U')
+        return cls(1, init_param=(W_r, U_r, W_z, U_z, W, U))
 
     def __call__(self, h, x):
         r = sigmoid.sigmoid(self.W_r(x) + self.U_r(h))

@@ -31,15 +31,45 @@ class Inception(link.Chain):
         proj_pool (int): Projection size of max pooling path.
 
     """
-    def __init__(self, in_channels, out1, proj3, out3, proj5, out5, proj_pool):
-        super(Inception, self).__init__(
-            conv1=convolution_2d.Convolution2D(in_channels, out1, 1),
-            proj3=convolution_2d.Convolution2D(in_channels, proj3, 1),
-            conv3=convolution_2d.Convolution2D(proj3, out3, 3, pad=1),
-            proj5=convolution_2d.Convolution2D(in_channels, proj5, 1),
-            conv5=convolution_2d.Convolution2D(proj5, out5, 5, pad=2),
-            projp=convolution_2d.Convolution2D(in_channels, proj_pool, 1),
-        )
+    def __init__(self, in_channels, out1, proj3, out3, proj5, out5, proj_pool, init_params=None):
+        if init_params is not None:
+            super(Inception, self).__init__(
+                conv1=init_params[0],
+                proj3=init_params[1],
+                conv3=init_params[2],
+                proj5=init_params[3],
+                conv5=init_params[4],
+                projp=init_params[5],
+            )
+        else:
+            super(Inception, self).__init__(
+                conv1=convolution_2d.Convolution2D(in_channels, out1, 1),
+                proj3=convolution_2d.Convolution2D(in_channels, proj3, 1),
+                conv3=convolution_2d.Convolution2D(proj3, out3, 3, pad=1),
+                proj5=convolution_2d.Convolution2D(in_channels, proj5, 1),
+                conv5=convolution_2d.Convolution2D(proj5, out5, 5, pad=2),
+                projp=convolution_2d.Convolution2D(in_channels, proj_pool, 1),
+            )
+    
+
+    def save(self, fname):
+        self.conv1.save(fname + '.conv1')
+        self.proj3.save(fname + '.proj3')
+        self.conv3.save(fname + '.conv3')
+        self.proj5.save(fname + '.proj5')
+        self.conv5.save(fname + '.conv5')
+        self.projp.save(fname + '.projp')
+    
+    @classmethod
+    def load(cls, fname):
+        conv1 = convolution_2d.Convolution2D.load(fname + '.conv1')
+        proj3 = convolution_2d.Convolution2D.load(fname + '.proj3')
+        conv3 = convolution_2d.Convolution2D.load(fname + '.conv3')
+        proj5 = convolution_2d.Convolution2D.load(fname + '.proj5')
+        conv5 = convolution_2d.Convolution2D.load(fname + '.conv5')
+        projp = convolution_2d.Convolution2D.load(fname + '.projp')
+        return cls(0, 0, 0, 0, 0, 0, 0, (conv1, proj3, conv3, proj5, conv5, projp))
+
 
     def __call__(self, x):
         """Computes the output of the Inception module.
