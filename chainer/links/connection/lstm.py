@@ -27,11 +27,18 @@ class LSTM(link.Chain):
         h (chainer.Variable): Output at the previous timestep.
 
     """
-    def __init__(self, in_size, out_size):
-        super(LSTM, self).__init__(
-            upward=linear.Linear(in_size, 4 * out_size),
-            lateral=linear.Linear(out_size, 4 * out_size, nobias=True),
-        )
+    def __init__(self, in_size, out_size, init_upward=None, init_lateral=None):
+        if init_upward and init_lateral:
+            assert in_size == init_upward.W.data.shape[1]
+            assert out_size == init_upward.W.data.shape[0] / 4
+            super(LSTM, self).__init__(upward=init_upward, lateral=init_lateral,
+            )
+        else:
+            super(LSTM, self).__init__(
+                upward=linear.Linear(in_size, 4 * out_size),
+                lateral=linear.Linear(out_size, 4 * out_size, nobias=True),
+            )
+
         self.state_size = out_size
         self.reset_state()
 
@@ -42,6 +49,19 @@ class LSTM(link.Chain):
 
         """
         self.c = self.h = None
+    
+    def save(self, fname):
+        self.upward.save(fname + '.upward') 
+        self.lateral.save(fname + '.lateral') 
+    
+    @classmethod
+    def load(cls, fname):
+        upward = linear.Linear.load(fname + '.upward')
+        lateral = linear.Linear.load(fname + '.lateral')
+        out_size, in_size = upward.W.data.shape
+        out_size /= 4
+        lstm_layer = cls(in_size, out_size, init_upward=upward, init_lateral=lateral)
+        return lstm_layer
 
     def __call__(self, x):
         """Updates the internal state and returns the LSTM outputs.

@@ -1,5 +1,5 @@
 import numpy
-
+import pickle
 from chainer.functions.connection import embed_id
 from chainer import link
 
@@ -25,6 +25,18 @@ class EmbedID(link.Link):
     def __init__(self, in_size, out_size):
         super(EmbedID, self).__init__(W=(in_size, out_size))
         self.W.data[...] = numpy.random.randn(in_size, out_size)
+     
+    def save(self, fname):
+        pickle.dump(self.W.data, open(fname, 'wb'))
+        return True
+
+    @classmethod
+    def load(cls, fname):
+        W = pickle.load(open(fname, 'rb'))
+        out_size, in_size = W.shape
+        model = cls(in_size, out_size)
+        model.W.data = W
+        return model
 
     def __call__(self, x):
         """Extracts the word embedding of given IDs.

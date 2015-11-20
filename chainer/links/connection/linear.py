@@ -1,5 +1,5 @@
 import numpy
-
+import pickle
 from chainer.functions.connection import linear
 from chainer import link
 
@@ -51,6 +51,18 @@ class Linear(link.Link):
             if initial_bias is None:
                 initial_bias = bias
             self.b.data[...] = initial_bias
+    
+    def save(self, fname):
+        if self.b is None:
+            pickle.dump([self.W.data, None], open(fname, 'wb'))
+        else:
+            pickle.dump([self.W.data, self.b.data], open(fname, 'wb'))
+    
+    @classmethod
+    def load(cls, fname):
+        init_W, init_b = pickle.load(open(fname, 'rb'))
+        out_size, in_size = init_W.shape
+        return cls(in_size, out_size, initialW=init_W, initial_bias=init_b)
 
     def __call__(self, x):
         """Applies the linear layer.
