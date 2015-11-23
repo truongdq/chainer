@@ -105,6 +105,9 @@ def make_extensions(options):
 
     no_cuda = options['no_cuda']
     settings = get_compiler_setting()
+    # settings['include_dirs'].append('/usr/include')
+    settings['include_dirs'].append('/project/nakamura-lab01/Work/truong-dq/tools/cuda_6.5/toolkit/include')
+    settings['include_dirs'].append('/project/nakamura-lab01/Work/truong-dq/tools/cudnn/cudnn-6.5-linux-x64-R2-rc1')
 
     try:
         import numpy
@@ -129,6 +132,9 @@ def make_extensions(options):
         settings['define_macros'].append(('CUPY_NO_CUDA', '1'))
 
     ret = []
+    # settings['library_dirs'].append('/usr/lib')
+    settings['library_dirs'].append('/project/nakamura-lab01/Work/truong-dq/tools/cuda_6.5/toolkit/lib')
+    settings['library_dirs'].append('/project/nakamura-lab01/Work/truong-dq/tools/cudnn/cudnn-6.5-linux-x64-R2-rc1')
     for module in MODULES:
         print('Include directories:', settings['include_dirs'])
         print('Library directories:', settings['library_dirs'])

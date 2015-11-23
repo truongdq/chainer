@@ -16,6 +16,7 @@ from cupy import manipulation
 from cupy import math
 import cupy.random
 from cupy import sorting
+from cupy.sorting import count, search
 from cupy import statistics
 from cupy import testing  # NOQA
 from cupy import util
