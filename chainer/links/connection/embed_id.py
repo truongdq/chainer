@@ -27,7 +27,8 @@ class EmbedID(link.Link):
         self.W.data[...] = numpy.random.randn(in_size, out_size)
      
     def save(self, fname):
-        pickle.dump(self.W.data, open(fname, 'wb'))
+        if 'w2vec' not in fname: # we don't want to save w2vec model
+            pickle.dump(self.W.data, open(fname, 'wb'))
         return True
 
     @classmethod

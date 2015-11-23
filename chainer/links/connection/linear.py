@@ -51,7 +51,7 @@ class Linear(link.Link):
             if initial_bias is None:
                 initial_bias = bias
             self.b.data[...] = initial_bias
-    
+
     def save(self, fname):
         if self.b is None:
             pickle.dump([self.W.data, None], open(fname, 'wb'))
