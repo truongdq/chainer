@@ -105,6 +105,7 @@ def make_extensions(options):
 
     no_cuda = options['no_cuda']
     settings = get_compiler_setting()
+    # The below three lines setting might only necessaries for pyenv
     # settings['include_dirs'].append('/usr/include')
     settings['include_dirs'].append('/project/nakamura-lab01/Work/truong-dq/tools/cuda_6.5/toolkit/include')
     settings['include_dirs'].append('/project/nakamura-lab01/Work/truong-dq/tools/cudnn/cudnn-6.5-linux-x64-R2-rc1')
@@ -132,6 +133,7 @@ def make_extensions(options):
         settings['define_macros'].append(('CUPY_NO_CUDA', '1'))
 
     ret = []
+    # The below three lines setting might only necessaries for pyenv
     # settings['library_dirs'].append('/usr/lib')
     settings['library_dirs'].append('/project/nakamura-lab01/Work/truong-dq/tools/cuda_6.5/toolkit/lib')
     settings['library_dirs'].append('/project/nakamura-lab01/Work/truong-dq/tools/cudnn/cudnn-6.5-linux-x64-R2-rc1')
