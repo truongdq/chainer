@@ -44,6 +44,9 @@ class Convolution2D(link.Link):
         kh, kw = _pair(ksize)
         self._conv_arg = (stride, pad, use_cudnn)
         self.ksize = ksize
+        self.stride = _pair(stride)
+        self.pad = _pair(pad)
+        self.use_cudnn = use_cudnn
 
         W_shape = (out_channels, in_channels, kh, kw)
         super(Convolution2D, self).__init__(W=W_shape)
@@ -67,7 +70,7 @@ class Convolution2D(link.Link):
             pickle.dump([self.W.data, self._conv_arg, self.ksize, None], open(fname, 'wb'))
         else:
             pickle.dump([self.W.data, self._conv_arg, self.ksize, self.b.data], open(fname, 'wb'))
-    
+
     @classmethod
     def load(cls, fname):
         init_W, conv_arg, ksize, init_b = pickle.load(open(fname, 'rb'))
@@ -87,7 +90,7 @@ class Convolution2D(link.Link):
 
         """
         return convolution_2d.convolution_2d(
-            x, self.W, self.b, *self._conv_arg)
+            x, self.W, self.b, self.stride, self.pad, self.use_cudnn)
 
 
 def _pair(x):

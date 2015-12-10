@@ -1536,6 +1536,8 @@ cpdef ndarray array(obj, dtype=None, bint copy=True, Py_ssize_t ndmin=0):
         return a
     else:
         a_cpu = numpy.array(obj, dtype=dtype, copy=False, ndmin=ndmin)
+        if a_cpu.dtype.char not in '?bhilqBHILQefd':
+            raise ValueError('Unsupported dtype %s' % a_cpu.dtype)
         if a_cpu.ndim > 0:
             a_cpu = numpy.ascontiguousarray(a_cpu)
         a = ndarray(a_cpu.shape, dtype=a_cpu.dtype)
@@ -1687,7 +1689,6 @@ cpdef ndarray _repeat(ndarray a, repeats, axis=None):
                 "'repeats' should not be negative: {}".format(repeats))
         if axis is None:
             a = a.reshape((-1, 1))
-            print(a.size, a.shape)
             ret = ndarray((a.size, repeats), dtype=a.dtype)
             if ret.size:
                 ret[...] = a
