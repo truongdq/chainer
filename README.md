@@ -9,6 +9,8 @@ If you have a problem with the above messages, try to run ```import cupy``` to k
 it might not caused by cupy is not present, but is because cuda is not initialized correctly, for example,
 some *.so is not found. The common mistake is CUDA lib path is not included in LD_LIBRARY_PATH.
 
+__"sudo apt-get install libhdf5-dev"__
+
 [![pypi](https://img.shields.io/pypi/dm/chainer.svg)](https://pypi.python.org/pypi/chainer)
 [![pypi](https://img.shields.io/pypi/v/chainer.svg)](https://pypi.python.org/pypi/chainer)
 [![GitHub license](https://img.shields.io/github/license/pfnet/chainer.svg)](https://github.com/pfnet/chainer)
