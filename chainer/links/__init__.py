@@ -29,6 +29,7 @@ Inception = inception.Inception
 InceptionBN = inceptionbn.InceptionBN
 Linear = linear.Linear
 LSTM = lstm.LSTM
+LSTM_Emphasis_Decoder = lstm.LSTM_Emphasis_Decoder
 MLPConvolution2D = mlp_convolution_2d.MLPConvolution2D
 Parameter = parameter.Parameter
 
