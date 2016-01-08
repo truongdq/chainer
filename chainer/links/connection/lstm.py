@@ -109,8 +109,11 @@ class LSTM_Emphasis_Decoder(link.Chain):
         h (chainer.Variable): Output at the previous timestep.
 
     """
-    def __init__(self, in_size, out_size, use_attention=True, init_upward=None, init_lateral=None, init_attention=True):
+    def __init__(self, in_size, out_size, use_attention=True, attention_size=None, init_upward=None, init_lateral=None, init_attention=True):
         self.use_attention = use_attention
+        if attention_size is None:
+            attention_size = in_size
+
         if init_upward and init_lateral:
             assert in_size == init_upward.W.data.shape[1]
             assert out_size == init_upward.W.data.shape[0] / 4
@@ -130,7 +133,7 @@ class LSTM_Emphasis_Decoder(link.Chain):
                 super(LSTM_Emphasis_Decoder, self).__init__(
                     upward=linear.Linear(in_size, 4 * out_size),
                     lateral=linear.Linear(out_size, 4 * out_size, nobias=True),
-                    attention=linear.Linear(in_size, 4 * out_size),
+                    attention=linear.Linear(attention_size, 4 * out_size),
                 )
 
         self.state_size = out_size
@@ -168,7 +171,6 @@ class LSTM_Emphasis_Decoder(link.Chain):
 
         Args:
             x (~chainer.Variable): A new batch from the input sequence.
-            emphasis (~chainer.Variable): A batch of previous estimated emphasis level.
             src_hidden (~chainer.Variable): A batch of corresponding source language LSTM output.
                                             Which is taken using word alignments.
 
