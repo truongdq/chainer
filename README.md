@@ -10,6 +10,10 @@ it might not caused by cupy is not present, but is because cuda is not initializ
 some *.so is not found. The common mistake is CUDA lib path is not included in LD_LIBRARY_PATH.
 
 __"sudo apt-get install libhdf5-dev"__
+export CFLAGS=-I/usr/include/hdf5/serial
+cd /usr/lib/x86_64-linux-gnu
+sudo ln -s libhdf5_serial.so.8.0.2 libhdf5.so
+sudo ln -s libhdf5_serial_hl.so.8.0.2 libhdf5_hl.so
 
 [![pypi](https://img.shields.io/pypi/dm/chainer.svg)](https://pypi.python.org/pypi/chainer)
 [![pypi](https://img.shields.io/pypi/v/chainer.svg)](https://pypi.python.org/pypi/chainer)
